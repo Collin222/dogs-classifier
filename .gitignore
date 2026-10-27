@@ -1,0 +1,13 @@
+data
+*.json
+*.exe
+*.pth
+*.csv
+*.pth
+*.ilk
+*.obj
+*.pdb
+**/*.env
+.venv/*
+.vs/*
+__pycache__/*
