@@ -73,6 +73,7 @@ export default function Home() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [results, setResults] = useState<PredictResponse | null>();
+	const [ms, setMs] = useState<number | null>(null);
 
 	const predict = async (pixels: number[]): Promise<PredictResponse> => {
 		if (!process.env.NEXT_PUBLIC_API_URL)
@@ -100,12 +101,16 @@ export default function Home() {
 		setError(null);
 		setResults(null);
 		setLoading(true);
+		setMs(null);
 
+		const start = performance.now();
 		parseImage(file)
 			.then(async (pixels) => {
 				const res = await predict(pixels);
 				setResults(res);
 				setLoading(false);
+				const end = performance.now();
+				setMs(end - start);
 			})
 			.catch((error: Error) => {
 				setError(error.message);
@@ -159,22 +164,31 @@ export default function Home() {
 					/>
 
 					{error != null && (
-						<Card className="flex flex-col items-center gap-1">
-							<h5 className="mt-4">
-								<IconAlertTriangleFilled
-									className="inlineicon text-red-500"
-									size="1.1rem"
-								/>{" "}
-								Something went wrong
-							</h5>
-							<p className="text-sm text-gray-300 ">{error}</p>
+						<Card className="mt-4">
+							<CardHeader>
+								<CardTitle>
+									<IconAlertTriangleFilled
+										className="inlineicon text-red-500"
+										size="1.1rem"
+									/>{" "}
+									Something went wrong
+								</CardTitle>
+								<CardDescription>
+									{error}
+								</CardDescription>
+							</CardHeader>
 						</Card>
 					)}
 
 					{previewUrl != null && error == null && (
 						<Card className="mt-4">
 							<CardHeader>
-								<CardTitle>Results</CardTitle>
+								<CardTitle>
+									Results
+									{!loading &&
+										ms != null &&
+										` (${(ms * 1000).toFixed(2)}s)`}
+								</CardTitle>
 								<CardDescription className="flex flex-row gap-4 flex-wrap gap-y-0.5">
 									{loading || results == null ? (
 										<div className="flex items-center gap-2">
