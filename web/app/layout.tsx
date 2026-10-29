@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const montserrat = Geist({
 	variable: "--font-montserrat",
@@ -14,9 +15,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
 	return (
-		<html lang="en" className={`${montserrat.variable} h-full antialiased`}>
+		<html
+			lang="en"
+			className={`${montserrat.variable} h-full antialiased dark`}
+		>
 			<body className="min-h-full flex flex-col scheme-dark">
-				{children}
+				<TooltipProvider delay={100}>{children}</TooltipProvider>
 			</body>
 		</html>
 	);
