@@ -11,7 +11,6 @@
 #include <cmath>
 #include <filesystem>
 #include <algorithm>
-#include <print>
 #include <chrono>
 
 CNN::CNN(vector<int> co, vector<int> cl, vector<double> m, vector<double> s) : convLayers(co), classifierLayers(cl), mus(m), stds(s) {
@@ -991,7 +990,19 @@ void RunHTTPServer(CNN &model) {
 
         auto end = chrono::steady_clock::now();
         double sec = chrono::duration<double>(end - start).count();
-        println("Inference in {}s with predictions {} and scores {}", sec, predictions, scores);
+        string pred = "[";
+        string scor = "[";
+        for (int p = 0; p < scores.size(); ++p) {
+            pred += to_string(predictions[p]);
+            scor += to_string(scores[p]);
+            if (p != scores.size() - 1) {
+                pred += ", "; 
+                scor += ", ";
+            }
+        }
+        pred += "]";
+        scor += "]";
+        cout << "Inference in " << sec << "s with predictions " << pred << " and scores " << scor << endl;
     });
 
     server.Options("/predict", [](const httplib::Request&, httplib::Response& res) {
